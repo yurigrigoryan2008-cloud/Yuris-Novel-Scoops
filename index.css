@@ -1,0 +1,133 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Courier New', monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Brand palette */
+  --color-terracotta: var(--terracotta);
+  --color-gold: var(--gold);
+  --color-berry: var(--berry);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Warm Literary Parlor palette */
+  --background: oklch(0.21 0.012 50);
+  --foreground: oklch(0.93 0.018 75);
+
+  --card: oklch(0.25 0.015 50);
+  --card-foreground: oklch(0.93 0.018 75);
+
+  --popover: oklch(0.25 0.015 50);
+  --popover-foreground: oklch(0.93 0.018 75);
+
+  /* terracotta / burnt orange */
+  --terracotta: oklch(0.68 0.13 48);
+  /* warm muted gold */
+  --gold: oklch(0.79 0.115 78);
+  /* deep berry / wine */
+  --berry: oklch(0.47 0.12 17);
+
+  --primary: oklch(0.66 0.105 48);
+  --primary-foreground: oklch(0.21 0.012 50);
+
+  --secondary: oklch(0.29 0.018 50);
+  --secondary-foreground: oklch(0.93 0.018 75);
+
+  --muted: oklch(0.29 0.018 50);
+  --muted-foreground: oklch(0.72 0.025 70);
+
+  --accent: oklch(0.78 0.085 80);
+  --accent-foreground: oklch(0.21 0.012 50);
+
+  --destructive: oklch(0.46 0.105 17);
+
+  --border: oklch(0.66 0.105 48 / 35%);
+  --input: oklch(0.66 0.105 48 / 25%);
+  --ring: oklch(0.78 0.085 80);
+
+  --radius: 0.625rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    /* subtle warm aged-paper gradient */
+    background-image:
+      radial-gradient(
+        ellipse 90% 70% at 50% -10%,
+        oklch(0.27 0.022 55 / 70%),
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 100% 100%,
+        oklch(0.24 0.03 30 / 50%),
+        transparent 55%
+      );
+    background-attachment: fixed;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Soft paper-grain texture for cards */
+@utility paper-grain {
+  background-image:
+    linear-gradient(
+      135deg,
+      oklch(1 0 0 / 3%) 0%,
+      transparent 40%,
+      oklch(0 0 0 / 6%) 100%
+    ),
+    radial-gradient(
+      oklch(1 0 0 / 2%) 0.5px,
+      transparent 0.5px
+    );
+  background-size:
+    100% 100%,
+    4px 4px;
+}
