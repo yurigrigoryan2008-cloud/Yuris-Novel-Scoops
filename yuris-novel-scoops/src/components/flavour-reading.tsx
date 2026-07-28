@@ -70,7 +70,7 @@ export function FlavourReading() {
     setCoverUrl(null)
 
     try {
-      const response = await fetch(${import.meta.env.VITE_API_URL}/api/recommend, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/recommend`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ flavors: selected })
@@ -81,7 +81,7 @@ export function FlavourReading() {
       setResult(data)
       
       if (data.bookTitle) {
-        const coverRes = await fetch(${import.meta.env.VITE_API_URL}/api/cover?title=${encodeURIComponent(data.bookTitle)}&author=${encodeURIComponent(data.bookAuthor || '')})
+        const coverRes = await fetch(`${import.meta.env.VITE_API_URL}/api/cover?title=${encodeURIComponent(data.bookTitle)}&author=${encodeURIComponent(data.bookAuthor || '')}`)
         if (coverRes.ok) {
           const coverData = await coverRes.json()
           if (coverData.url) setCoverUrl(coverData.url)
