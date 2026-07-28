@@ -1,7 +1,4 @@
-     isSelected 
-                      ? 'bg-gold border-gold text-background' 
-                      : 'border-gold/30 text-gold/80 hover:border-gold'
-                  }}
+}
                 >
                   {name}
                 </button>
@@ -34,7 +31,7 @@
                 src={coverUrl} 
                 alt={result.bookTitle} 
                 onLoad={() => setCoverLoaded(true)}
-                className={h-full w-full object-cover transition-opacity duration-300 ${coverLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={coverLoaded ? "h-full w-full object-cover transition-opacity duration-300 opacity-100" : "h-full w-full object-cover transition-opacity duration-300 opacity-0"}
               />
             ) : <BookCoverFallback />}
           </div>
