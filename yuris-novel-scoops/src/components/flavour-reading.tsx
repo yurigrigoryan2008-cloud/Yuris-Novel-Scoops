@@ -81,7 +81,7 @@ export function FlavourReading() {
       setResult(data)
       
       if (data.bookTitle) {
-        const coverRes = await fetch(/api/cover?title=${encodeURIComponent(data.bookTitle)}&author=${encodeURIComponent(data.bookAuthor || '')})
+        const coverRes = await fetch(`/api/cover?title=${encodeURIComponent(data.bookTitle)}&author=${encodeURIComponent(data.bookAuthor || '')}`)
         if (coverRes.ok) {
           const coverData = await coverRes.json()
           if (coverData.url) setCoverUrl(coverData.url)
