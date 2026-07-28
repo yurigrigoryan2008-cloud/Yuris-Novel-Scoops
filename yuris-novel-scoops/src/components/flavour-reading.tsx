@@ -1,4 +1,115 @@
+import { useEffect, useState } from 'react'
+import { menuSections } from '@/lib/flavors'
+
+/** All 24 flavour names flat, in menu order */
+const ALL_FLAVOUR_NAMES = menuSections.flatMap((s) => s.flavors.map((f) => f.name))
+
+type Phase = 'select' | 'loading' | 'result' | 'error'
+
+interface ReadingResult {
+  reading: string
+  bookTitle: string
+  bookAuthor: string
+  bookGenre: string
+  micDrop: string
 }
+
+// ─── Shared SVG book cover fallback ──────────────────────────────────────────
+
+function BookCoverFallback() {
+  return (
+    <div className="flex h-full w-full items-center justify-center rounded bg-terracotta/10">
+      <svg
+        viewBox="0 0 48 64"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-10 w-8 text-terracotta/50"
+        aria-hidden
+      >
+        <rect x="6" y="4" width="36" height="56" rx="3" />
+        <line x1="14" y1="4" x2="14" y2="60" />
+        <line x1="20" y1="18" x2="36" y2="18" />
+        <line x1="20" y1="24" x2="36" y2="24" />
+        <line x1="20" y1="30" x2="36" y2="30" />
+        <line x1="20" y1="36" x2="30" y2="36" />
+      </svg>
+    </div>
+  )
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+export function FlavourReading() {
+  const [selected, setSelected] = useState<string[]>([])
+  const [phase, setPhase] = useState<Phase>('select')
+  const [result, setResult] = useState<ReadingResult | null>(null)
+  const [coverUrl, setCoverUrl] = useState<string | null>(null)
+  const [coverLoaded, setCoverLoaded] = useState(false)
+  const [showLimitMsg, setShowLimitMsg] = useState(false)
+
+  // ── Flavour toggle ──────────────────────────────────────────────────────────
+  function handleToggle(name: string) {
+    if (selected.includes(name)) {
+      setSelected((prev) => prev.filter((f) => f !== name))
+    } else if (selected.length >= 3) {
+      setShowLimitMsg(true)
+    } else {
+      setSelected((prev) => [...prev, name])
+      setShowLimitMsg(false)
+    }
+  }
+
+  // ── Execute Reading with AI Agent ───────────────────────────────────────────
+  async function handleReadFlavors() {
+    if (selected.length === 0) return
+    setPhase('loading')
+    setCoverLoaded(false)
+    setCoverUrl(null)
+
+    try {
+      const response = await fetch('/api/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ flavors: selected })
+      })
+
+      if (!response.ok) throw new Error('API failure')
+      const data = await response.json()
+      setResult(data)
+      
+      if (data.bookTitle) {
+        const coverRes = await fetch(/api/cover?title=${encodeURIComponent(data.bookTitle)}&author=${encodeURIComponent(data.bookAuthor || '')})
+        if (coverRes.ok) {
+          const coverData = await coverRes.json()
+          if (coverData.url) setCoverUrl(coverData.url)
+        }
+      }
+      setPhase('result')
+    } catch (err) {
+      setPhase('error')
+    }
+  }
+
+  return (
+    <div className="rounded-xl border border-gold/20 bg-background/50 p-6 backdrop-blur-sm sm:p-8">
+      {phase === 'select' && (
+        <div>
+          <h3 className="font-serif text-xl text-gold mb-4">Select up to 3 Flavors for your literary reading</h3>
+          <div className="flex flex-wrap gap-2 mb-6">
+            {ALL_FLAVOUR_NAMES.map((name) => {
+              const isSelected = selected.includes(name)
+              return (
+                <button
+                  key={name}
+                  onClick={() => handleToggle(name)}
+                  className={
+                    isSelected 
+                      ? "px-3 py-1.5 rounded-full border text-xs font-medium transition-all bg-gold border-gold text-background" 
+                      : "px-3 py-1.5 rounded-full border text-xs font-medium transition-all border-gold/30 text-gold/80 hover:border-gold"
+                    }
                 >
                   {name}
                 </button>
